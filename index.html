@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Preço · V3</title>
+<style>
+:root{
+  --ink:#172f38;--navy:#173f4b;--navy-2:#0f3440;--teal:#0d7b68;
+  --teal-soft:#eaf7f3;--gold:#c58b2a;--gold-soft:#fff7e8;
+  --bg:#f4f7f7;--surface:#fff;--field:#f7fafb;--line:#dfe8ea;
+  --muted:#71848b;--danger:#b42318;--shadow:0 18px 45px rgba(20,52,61,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#f5f8f8 0%,#eef3f3 100%);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.app{width:min(940px,calc(100% - 28px));margin:28px auto 42px}
+.topbar{height:64px;background:var(--navy);color:#fff;border-radius:18px 18px 0 0;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.brand{font-size:13px;font-weight:900;letter-spacing:.07em}
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,.08);padding:4px;border-radius:11px}
+.tabs button{border:0;background:transparent;color:#cfe1e7;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:750}
+.tabs button.active{background:#fff;color:var(--navy)}
+.view{display:none}.view.active{display:block}
+.panel{background:var(--surface);box-shadow:var(--shadow);border-radius:0 0 18px 18px;overflow:hidden}
+
+/* Resultado: informações importantes, mas sem parecer uma faixa pesada */
+.result{background:var(--surface);padding:18px 24px 15px;border-bottom:1px solid var(--line)}
+.result-main{display:grid;grid-template-columns:1fr auto;align-items:end;gap:20px;padding-bottom:15px}
+.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:800}
+.result-name{font-size:15px;font-weight:850;margin-top:5px;color:var(--ink)}
+.price-label{font-size:10px;text-align:right;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:800;margin-bottom:3px}
+.price{font-size:34px;font-weight:950;letter-spacing:-.035em;line-height:1;color:var(--teal)}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.metric{border:1px solid var(--line);background:#fbfcfc;border-radius:11px;padding:10px 12px}
+.metric-label{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;margin-bottom:4px}
+.metric-value{font-size:14px;font-weight:900;color:var(--ink)}
+.metric.profit .metric-value{color:var(--teal)}
+.metric.tax .metric-value{color:#a36d13}
+
+/* Formulário */
+.form{padding:19px 24px 22px}
+.section{margin-top:19px}.section:first-child{margin-top:0}
+.section-title{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:900;letter-spacing:.11em;text-transform:uppercase;margin-bottom:10px;color:#365660}
+.section-title:before{content:"";width:3px;height:12px;background:var(--teal);border-radius:4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 9px}
+.field label{display:block;font-size:10px;font-weight:750;text-transform:uppercase;letter-spacing:.04em;color:#4e6871;margin:0 0 5px}
+.field input,.field textarea,.search{width:100%;border:1px solid var(--line);background:var(--field);border-radius:9px;outline:none;color:var(--ink);transition:.15s}
+.field input{height:41px;padding:0 12px}
+.field textarea{min-height:80px;padding:10px 12px;resize:vertical}
+.field input:focus,.field textarea:focus,.search:focus{background:#fff;border-color:#76a7b2;box-shadow:0 0 0 3px rgba(52,127,143,.09)}
+.currency{position:relative}.currency input{padding-left:35px;text-align:right}.currency:before{content:"R$";position:absolute;left:12px;top:12px;font-size:12px;color:#74878d;z-index:1}
+.percent{position:relative}.percent input{text-align:right;padding-right:31px}.percent:after{content:"%";position:absolute;right:12px;top:12px;font-size:12px;color:#74878d;pointer-events:none}
+
+/* Ações */
+.actions{display:flex;gap:8px;margin-top:19px}
+.primary{flex:1;height:43px;border:0;border-radius:10px;background:var(--navy);color:#fff;font-weight:850;box-shadow:0 5px 12px rgba(23,63,75,.12)}
+.primary:hover{background:var(--navy-2)}
+.secondary,.danger{height:43px;border-radius:10px;padding:0 14px;font-weight:800}
+.secondary{border:1px solid var(--line);background:#fff;color:#536a72}.secondary:hover{background:#f5f8f8}
+.danger{border:1px solid #f0d5d2;background:#fff8f7;color:var(--danger)}.danger:hover{background:#fff0ee}
+.note{text-align:center;color:var(--muted);font-size:10px;margin-top:9px}
+
+/* Itens */
+.header-row{display:flex;align-items:center;justify-content:space-between;margin:22px 0 12px}
+.header-row h2{font-size:20px;margin:0;letter-spacing:-.02em}.count{font-size:11px;color:var(--muted)}
+.search{height:42px;padding:0 13px;background:#fff;margin-bottom:12px}
+.products{display:grid;gap:9px}.product{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 4px 12px rgba(20,52,61,.035)}
+.product h3{font-size:14px;margin:0 0 5px}.product p{font-size:11px;color:var(--muted);margin:0;max-width:510px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{font-size:10px;color:var(--muted);margin-top:7px}.right{text-align:right}.product-price{font-size:18px;font-weight:900;color:var(--teal);margin-bottom:7px;white-space:nowrap}
+.item-actions{display:flex;gap:6px}.item-actions button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 9px;font-size:11px;font-weight:750}.item-actions .delete{color:var(--danger)}
+.empty{background:#fff;border:1px dashed var(--line);border-radius:12px;padding:38px;text-align:center;color:var(--muted);font-size:12px}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(4,27,35,.38);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.modal-bg.open{display:flex}
+.modal{width:min(500px,100%);background:#fff;border-radius:16px;box-shadow:0 25px 70px rgba(0,0,0,.2);padding:22px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.modal h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f6;border-radius:8px;width:32px;height:32px}
+.modal .field{margin-bottom:12px}.modal-actions{display:flex;gap:8px;margin-top:17px}.modal-actions button{flex:1;height:40px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:800}.modal-actions .save{background:var(--navy);color:#fff;border:0}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#173e4a;color:#fff;padding:10px 14px;border-radius:9px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:620px){
+ .app{width:calc(100% - 14px);margin:10px auto 25px}.topbar{height:auto;min-height:58px;padding:9px 11px;gap:8px}.brand{font-size:11px}.tabs button{font-size:10px;padding:7px 8px}
+ .result{padding:16px}.price{font-size:28px}.form{padding:16px}.grid{gap:10px 7px}.field input{height:39px}.metrics{gap:7px}
+ .metric{padding:9px}.metric-value{font-size:12px}
+ .product{align-items:flex-start;flex-direction:column}.right{width:100%;text-align:left}.item-actions{width:100%}.item-actions button{flex:1}
+ .actions{flex-wrap:wrap}.primary{min-width:100%}.secondary,.danger{flex:1}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">▣ &nbsp; CALCULADORA DE PREÇO</div>
+    <div class="tabs">
+      <button id="tabCalc" class="active" onclick="showView('calculator')">Calculadora</button>
+      <button id="tabItems" onclick="showView('items')">Meus Itens</button>
+    </div>
+  </div>
+
+  <section id="calculator" class="view active">
+    <div class="panel">
+      <div class="result">
+        <div class="result-main">
+          <div><div class="eyebrow">Produto</div><div id="resultName" class="result-name">Sem nome</div></div>
+          <div><div class="price-label">Preço final</div><div id="finalPrice" class="price">R$ 0,00</div></div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><span class="metric-label">Custo total</span><span id="costValue" class="metric-value">R$ 0,00</span></div>
+          <div class="metric profit"><span class="metric-label">Lucro</span><span id="profitValue" class="metric-value">R$ 0,00</span></div>
+          <div class="metric tax"><span class="metric-label">Taxas / impostos</span><span id="taxValue" class="metric-value">R$ 0,00</span></div>
+        </div>
+      </div>
+
+      <div class="form">
+        <div class="field"><label>Produto</label><input id="name" placeholder="Nome do produto (para salvar)"></div>
+
+        <div class="section">
+          <div class="section-title">1 · Mão de obra</div>
+          <div class="grid">
+            <div class="field"><label>Valor da hora</label><div class="currency"><input id="hourly" inputmode="decimal" autocomplete="off" value="70,00"></div></div>
+            <div class="field"><label>Tempo (horas)</label><input id="hours" type="number" step="0.01" value="2"></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">2 · Custos do trabalho</div>
+          <div class="grid">
+            <div class="field"><label>Material</label><div class="currency"><input id="material" inputmode="decimal" autocomplete="off" value="15,00"></div></div>
+            <div class="field"><label>Embalagem</label><div class="currency"><input id="packaging" inputmode="decimal" autocomplete="off" value="3,50"></div></div>
+            <div class="field"><label>Custos indiretos</label><div class="currency"><input id="indirect" inputmode="decimal" autocomplete="off" value="2,00"></div></div>
+            <div class="field"><label>Outros custos</label><div class="currency"><input id="other" inputmode="decimal" autocomplete="off" value="5,00"></div></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">3 · Margem e taxas</div>
+          <div class="grid">
+            <div class="field"><label>Margem de lucro</label><div class="percent"><input id="margin" type="number" step="0.5" value="20"></div></div>
+            <div class="field"><label>Taxas / impostos</label><div class="percent"><input id="taxRate" type="number" step="0.5" value="6"></div></div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" onclick="saveProduct()">▣ &nbsp; Salvar produto</button>
+          <button class="secondary" onclick="undoLast()" title="Desfazer última alteração">↶</button>
+          <button class="danger" onclick="clearAll()" title="Apagar tudo">Apagar tudo</button>
+        </div>
+      </div>
+    </div>
+    <div class="note">O preço final já inclui a margem de lucro e as taxas sobre a venda.</div>
+  </section>
+
+  <section id="items" class="view">
+    <div class="header-row"><h2>Meus Itens</h2><span id="count" class="count">0 produtos</span></div>
+    <input id="search" class="search" placeholder="Buscar produto..." oninput="renderProducts()">
+    <div id="products" class="products"></div>
+  </section>
+</div>
+
+<div id="modalBg" class="modal-bg">
+  <div class="modal">
+    <div class="modal-head"><h2>Editar produto</h2><button class="close" onclick="closeModal()">×</button></div>
+    <div class="field"><label>Nome do produto</label><input id="editName" placeholder="Nome do produto"></div>
+    <div class="field"><label>Descrição</label><textarea id="editDescription" placeholder="Descrição opcional do produto"></textarea></div>
+    <div class="modal-actions"><button onclick="closeModal()">Cancelar</button><button class="save" onclick="saveEdit()">Salvar alterações</button></div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const currencyIds=['hourly','material','packaging','indirect','other'];
+const calcIds=['name','hourly','hours','material','packaging','indirect','other','margin','taxRate'];
+let historyStack=[], editingId=null;
+
+function parseMoney(id){
+  let raw=document.getElementById(id).value.trim();
+  if(!raw)return 0;
+  raw=raw.replace(/\s/g,'').replace(/^R\$/i,'');
+  if(raw.includes(',')) raw=raw.replace(/\./g,'').replace(',','.');
+  return parseFloat(raw)||0;
+}
+function money(n){return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(n||0)}
+function formatMoneyInput(el){
+  let raw=el.value.trim().replace(/\s/g,'').replace(/^R\$/i,'');
+  if(!raw){el.value='0,00';return}
+  if(raw.includes(',')) raw=raw.replace(/\./g,'').replace(',','.');
+  const n=parseFloat(raw);
+  if(Number.isNaN(n)){el.value='0,00';return}
+  el.value=n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function snapshot(){
+  const o={}; calcIds.forEach(id=>o[id]=document.getElementById(id).value); return o;
+}
+function restore(o){
+  calcIds.forEach(id=>{if(o[id]!==undefined)document.getElementById(id).value=o[id]});
+  calculate();
+}
+currencyIds.forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener('focus',()=>{el.select()});
+  el.addEventListener('input',calculate);
+  el.addEventListener('blur',()=>{formatMoneyInput(el);calculate()});
+});
+calcIds.filter(id=>!currencyIds.includes(id)).forEach(id=>document.getElementById(id).addEventListener('input',calculate));
+
+let lastSnapshot=snapshot();
+document.addEventListener('input',e=>{
+  if(calcIds.includes(e.target.id)){
+    historyStack.push(lastSnapshot);
+    if(historyStack.length>30)historyStack.shift();
+    lastSnapshot=snapshot();
+  }
+});
+function val(id){return currencyIds.includes(id)?parseMoney(id):(parseFloat(document.getElementById(id).value)||0)}
+function calculate(){
+  const labor=val('hourly')*val('hours');
+  const cost=labor+val('material')+val('packaging')+val('indirect')+val('other');
+  const margin=val('margin')/100,tax=val('taxRate')/100,den=1-margin-tax;
+  const price=den>0?cost/den:0;
+  const profit=price*margin,taxes=price*tax;
+  document.getElementById('finalPrice').textContent=money(price);
+  document.getElementById('costValue').textContent=money(cost);
+  document.getElementById('profitValue').textContent=money(profit);
+  document.getElementById('taxValue').textContent=money(taxes);
+  document.getElementById('resultName').textContent=document.getElementById('name').value.trim()||'Sem nome';
+  return {labor,cost,price,profit,taxes};
+}
+function getProducts(){return JSON.parse(localStorage.getItem('calculadoraProdutos')||'[]')}
+function setProducts(p){localStorage.setItem('calculadoraProdutos',JSON.stringify(p))}
+function saveProduct(){
+  const name=document.getElementById('name').value.trim();
+  if(!name){toast('Digite um nome para o produto.');document.getElementById('name').focus();return}
+  const c=calculate(),ps=getProducts();
+  ps.unshift({id:Date.now().toString(),name,description:'',hourly:val('hourly'),hours:val('hours'),material:val('material'),packaging:val('packaging'),indirect:val('indirect'),other:val('other'),margin:val('margin'),taxRate:val('taxRate'),...c,savedAt:new Date().toISOString()});
+  setProducts(ps);renderProducts();toast('Produto salvo com sucesso!');showView('items');
+}
+function editProduct(id){
+  const p=getProducts().find(x=>x.id===id);if(!p)return;
+  editingId=id;document.getElementById('editName').value=p.name;document.getElementById('editDescription').value=p.description||'';
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('open');editingId=null}
+function saveEdit(){
+  const name=document.getElementById('editName').value.trim();
+  if(!name){toast('O nome do produto é obrigatório.');return}
+  const ps=getProducts(),p=ps.find(x=>x.id===editingId);if(!p)return;
+  p.name=name;p.description=document.getElementById('editDescription').value.trim();setProducts(ps);renderProducts();closeModal();toast('Produto atualizado!');
+}
+function loadProduct(id){
+  const p=getProducts().find(x=>x.id===id);if(!p)return;
+  document.getElementById('name').value=p.name;
+  ['hourly','hours','material','packaging','indirect','other','margin','taxRate'].forEach(id=>{
+    document.getElementById(id).value=currencyIds.includes(id)?Number(p[id]).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):p[id];
+  });
+  calculate();lastSnapshot=snapshot();showView('calculator');
+}
+function deleteProduct(id){
+  if(!confirm('Excluir este produto salvo?'))return;
+  setProducts(getProducts().filter(p=>p.id!==id));renderProducts();toast('Produto excluído.');
+}
+function renderProducts(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const ps=getProducts().filter(p=>p.name.toLowerCase().includes(q));
+  document.getElementById('count').textContent=`${ps.length} ${ps.length===1?'produto':'produtos'}`;
+  const el=document.getElementById('products');
+  if(!ps.length){el.innerHTML='<div class="empty">Nenhum produto salvo ainda.</div>';return}
+  el.innerHTML=ps.map(p=>`<div class="product">
+    <div style="min-width:0;flex:1"><h3>${esc(p.name)}</h3><p>${esc(p.description||'Sem descrição')}</p><div class="meta">Custo ${money(p.cost)} · Margem ${p.margin}% · Taxas ${p.taxRate}%</div></div>
+    <div class="right"><div class="product-price">${money(p.price)}</div><div class="item-actions"><button onclick="loadProduct('${p.id}')">Abrir</button><button onclick="editProduct('${p.id}')">Editar</button><button class="delete" onclick="deleteProduct('${p.id}')">Excluir</button></div></div>
+  </div>`).join('');
+}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function showView(v){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById(v).classList.add('active');
+  document.getElementById('tabCalc').classList.toggle('active',v==='calculator');
+  document.getElementById('tabItems').classList.toggle('active',v==='items');
+  if(v==='items')renderProducts();
+}
+function undoLast(){
+  if(!historyStack.length){toast('Não há nenhuma alteração para desfazer.');return}
+  restore(historyStack.pop());lastSnapshot=snapshot();toast('Última alteração desfeita.');
+}
+function clearAll(){
+  if(!confirm('Apagar todos os campos da calculadora?'))return;
+  calcIds.forEach(id=>document.getElementById(id).value='');
+  document.getElementById('hourly').value='0,00';document.getElementById('material').value='0,00';document.getElementById('packaging').value='0,00';document.getElementById('indirect').value='0,00';document.getElementById('other').value='0,00';
+  document.getElementById('hours').value='0';document.getElementById('margin').value='0';document.getElementById('taxRate').value='0';
+  historyStack=[];lastSnapshot=snapshot();calculate();toast('Calculadora limpa.');
+}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._toast);window._toast=setTimeout(()=>t.classList.remove('show'),1800)}
+document.getElementById('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});
+currencyIds.forEach(id=>formatMoneyInput(document.getElementById(id)));
+calculate();renderProducts();
+</script>
+</body>
+</html>
