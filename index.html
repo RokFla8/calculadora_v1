@@ -6,20 +6,20 @@
 <title>Calculadora de Preço · V4</title>
 <style>
 :root{
-  --ink:#172f38;--navy:#173f4b;--navy-2:#0f3440;--teal:#0d7b68;
-  --teal-soft:#eaf7f3;--gold:#c58b2a;--gold-soft:#fff7e8;
-  --bg:#f4f7f7;--surface:#fff;--field:#f7fafb;--line:#dfe8ea;
-  --muted:#71848b;--danger:#b42318;--shadow:0 18px 45px rgba(20,52,61,.10);
+  --ink:#5f3740;--navy:#944856;--navy-2:#7f3948;--teal:#6B5F30;
+  --teal-soft:#f3e4e6;--gold:#6B5F30;--gold-soft:#f3eee1;
+  --bg:#F8F3EE;--surface:#fff;--field:#fbf7f4;--line:#eadcdf;
+  --muted:#80636a;--danger:#944856;--shadow:0 18px 45px rgba(148,72,86,.10);
 }
 *{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,#f5f8f8 0%,#eef3f3 100%);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
+body{margin:0;background:linear-gradient(180deg,#F8F3EE 0%,#f3e4e6 100%);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
 button,input,textarea{font:inherit}
 button{cursor:pointer}
 .app{width:min(940px,calc(100% - 28px));margin:28px auto 42px}
 .topbar{height:64px;background:var(--navy);color:#fff;border-radius:18px 18px 0 0;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
-.brand{font-size:13px;font-weight:900;letter-spacing:.07em}
-.tabs{display:flex;gap:4px;background:rgba(255,255,255,.08);padding:4px;border-radius:11px}
-.tabs button{border:0;background:transparent;color:#cfe1e7;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:750}
+.brand{font-size:13px;font-weight:900;letter-spacing:.07em;color:#fff}
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,.12);padding:4px;border-radius:11px}
+.tabs button{border:0;background:transparent;color:#f8e8eb;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:750}
 .tabs button.active{background:#fff;color:var(--navy)}
 .view{display:none}.view.active{display:block}
 .panel{background:var(--surface);box-shadow:var(--shadow);border-radius:0 0 18px 18px;overflow:hidden}
@@ -32,40 +32,40 @@ button{cursor:pointer}
 .price-label{font-size:10px;text-align:right;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:800;margin-bottom:3px}
 .price{font-size:34px;font-weight:950;letter-spacing:-.035em;line-height:1;color:var(--teal)}
 .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.metric{border:1px solid var(--line);background:#fbfcfc;border-radius:11px;padding:10px 12px}
+.metric{border:1px solid var(--line);background:#fcf9f7;border-radius:11px;padding:10px 12px}
 .metric-label{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;margin-bottom:4px}
 .metric-value{font-size:14px;font-weight:900;color:var(--ink)}
 .metric.profit .metric-value{color:var(--teal)}
-.metric.tax .metric-value{color:#a36d13}
+.metric.tax .metric-value{color:#6B5F30}
 
 /* Formulário */
 .form{padding:19px 24px 22px}
 .section{margin-top:19px}.section:first-child{margin-top:0}
-.section-title{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:900;letter-spacing:.11em;text-transform:uppercase;margin-bottom:10px;color:#365660}
+.section-title{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:900;letter-spacing:.11em;text-transform:uppercase;margin-bottom:10px;color:#944856}
 .section-title:before{content:"";width:3px;height:12px;background:var(--teal);border-radius:4px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 9px}
 .field label{display:block;font-size:10px;font-weight:750;text-transform:uppercase;letter-spacing:.04em;color:#4e6871;margin:0 0 5px}
 .field input,.field textarea,.search{width:100%;border:1px solid var(--line);background:var(--field);border-radius:9px;outline:none;color:var(--ink);transition:.15s}
 .field input{height:41px;padding:0 12px}
 .field textarea{min-height:80px;padding:10px 12px;resize:vertical}
-.field input:focus,.field textarea:focus,.search:focus{background:#fff;border-color:#76a7b2;box-shadow:0 0 0 3px rgba(52,127,143,.09)}
-.currency{position:relative}.currency input{padding-left:35px;text-align:right}.currency:before{content:"R$";position:absolute;left:12px;top:12px;font-size:12px;color:#74878d;z-index:1}
-.percent{position:relative}.percent input{text-align:right;padding-right:31px}.percent:after{content:"%";position:absolute;right:12px;top:12px;font-size:12px;color:#74878d;pointer-events:none}
+.field input:focus,.field textarea:focus,.search:focus{background:#fff;border-color:#DE8898;box-shadow:0 0 0 3px rgba(222,136,152,.16)}
+.currency{position:relative}.currency input{padding-left:35px;text-align:right}.currency:before{content:"R$";position:absolute;left:12px;top:12px;font-size:12px;color:#80636a;z-index:1}
+.percent{position:relative}.percent input{text-align:right;padding-right:31px}.percent:after{content:"%";position:absolute;right:12px;top:12px;font-size:12px;color:#80636a;pointer-events:none}
 
 /* Ações */
 .actions{display:flex;gap:8px;margin-top:19px}
-.primary{flex:1;height:43px;border:0;border-radius:10px;background:var(--navy);color:#fff;font-weight:850;box-shadow:0 5px 12px rgba(23,63,75,.12)}
-.primary:hover{background:var(--navy-2)}
+.primary{flex:1;height:43px;border:0;border-radius:10px;background:#DE8898;color:#fff;font-weight:850;box-shadow:0 5px 12px rgba(23,63,75,.12)}
+.primary:hover{background:#c97485}
 .secondary,.danger{height:43px;border-radius:10px;padding:0 14px;font-weight:800}
-.secondary{border:1px solid var(--line);background:#fff;color:#536a72}.secondary:hover{background:#f5f8f8}
-.danger{border:1px solid #f0d5d2;background:#fff8f7;color:var(--danger)}.danger:hover{background:#fff0ee}
+.secondary{border:1px solid var(--line);background:#fff;color:#6f555c}.secondary:hover{background:#fbf5f2}
+.danger{border:1px solid #e8cfd4;background:#fff7f8;color:var(--danger)}.danger:hover{background:#f8e9eb}
 .note{text-align:center;color:var(--muted);font-size:10px;margin-top:9px}
 
 /* Itens */
 .header-row{display:flex;align-items:center;justify-content:space-between;margin:22px 0 12px}
 .header-row h2{font-size:20px;margin:0;letter-spacing:-.02em}.count{font-size:11px;color:var(--muted)}
 .search{height:42px;padding:0 13px;background:#fff;margin-bottom:12px}
-.products{display:grid;gap:9px}.product{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 4px 12px rgba(20,52,61,.035)}
+.products{display:grid;gap:9px}.product{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 4px 12px rgba(148,72,86,.05)}
 .product h3{font-size:14px;margin:0 0 5px}.product p{font-size:11px;color:var(--muted);margin:0;max-width:510px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .meta{font-size:10px;color:var(--muted);margin-top:7px}.right{text-align:right}.product-price{font-size:18px;font-weight:900;color:var(--teal);margin-bottom:7px;white-space:nowrap}
 .item-actions{display:flex;gap:6px}.item-actions button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 9px;font-size:11px;font-weight:750}.item-actions .delete{color:var(--danger)}
@@ -74,9 +74,9 @@ button{cursor:pointer}
 /* Modal */
 .modal-bg{position:fixed;inset:0;background:rgba(4,27,35,.38);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.modal-bg.open{display:flex}
 .modal{width:min(500px,100%);background:#fff;border-radius:16px;box-shadow:0 25px 70px rgba(0,0,0,.2);padding:22px}
-.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.modal h2{font-size:18px;margin:0}.close{border:0;background:#f1f5f6;border-radius:8px;width:32px;height:32px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.modal h2{font-size:18px;margin:0}.close{border:0;background:#f3e4e6;border-radius:8px;width:32px;height:32px}
 .modal .field{margin-bottom:12px}.modal-actions{display:flex;gap:8px;margin-top:17px}.modal-actions button{flex:1;height:40px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:800}.modal-actions .save{background:var(--navy);color:#fff;border:0}
-.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#173e4a;color:#fff;padding:10px 14px;border-radius:9px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#944856;color:#fff;padding:10px 14px;border-radius:9px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:620px){
  .app{width:calc(100% - 14px);margin:10px auto 25px}.topbar{height:auto;min-height:58px;padding:9px 11px;gap:8px}.brand{font-size:11px}.tabs button{font-size:10px;padding:7px 8px}
  .result{padding:16px}.price{font-size:28px}.form{padding:16px}.grid{gap:10px 7px}.field input{height:39px}.metrics{gap:7px}
@@ -169,6 +169,7 @@ button{cursor:pointer}
 <script>
 const currencyIds=['hourly','material','packaging','indirect','other'];
 const calcIds=['name','hourly','hours','material','packaging','indirect','other','margin','taxRate'];
+// V5 — identidade visual: DE8898 / 944856 / 6B5F30 / F8F3EE
 let historyStack=[], editingId=null;
 
 function parseMoney(id){
