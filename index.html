@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Preço · V3</title>
+<title>Calculadora de Preço · V4</title>
 <style>
 :root{
   --ink:#172f38;--navy:#173f4b;--navy-2:#0f3440;--teal:#0d7b68;
@@ -116,26 +116,26 @@ button{cursor:pointer}
         <div class="section">
           <div class="section-title">1 · Mão de obra</div>
           <div class="grid">
-            <div class="field"><label>Valor da hora</label><div class="currency"><input id="hourly" inputmode="decimal" autocomplete="off" value="70,00"></div></div>
-            <div class="field"><label>Tempo (horas)</label><input id="hours" type="number" step="0.01" value="2"></div>
+            <div class="field"><label>Valor da hora</label><div class="currency"><input id="hourly" inputmode="decimal" autocomplete="off" value="0,00"></div></div>
+            <div class="field"><label>Tempo (horas)</label><input id="hours" type="number" step="0.01" value="0"></div>
           </div>
         </div>
 
         <div class="section">
           <div class="section-title">2 · Custos do trabalho</div>
           <div class="grid">
-            <div class="field"><label>Material</label><div class="currency"><input id="material" inputmode="decimal" autocomplete="off" value="15,00"></div></div>
-            <div class="field"><label>Embalagem</label><div class="currency"><input id="packaging" inputmode="decimal" autocomplete="off" value="3,50"></div></div>
-            <div class="field"><label>Custos indiretos</label><div class="currency"><input id="indirect" inputmode="decimal" autocomplete="off" value="2,00"></div></div>
-            <div class="field"><label>Outros custos</label><div class="currency"><input id="other" inputmode="decimal" autocomplete="off" value="5,00"></div></div>
+            <div class="field"><label>Material</label><div class="currency"><input id="material" inputmode="decimal" autocomplete="off" value="0,00"></div></div>
+            <div class="field"><label>Embalagem</label><div class="currency"><input id="packaging" inputmode="decimal" autocomplete="off" value="0,00"></div></div>
+            <div class="field"><label>Custos indiretos</label><div class="currency"><input id="indirect" inputmode="decimal" autocomplete="off" value="0,00"></div></div>
+            <div class="field"><label>Outros custos</label><div class="currency"><input id="other" inputmode="decimal" autocomplete="off" value="0,00"></div></div>
           </div>
         </div>
 
         <div class="section">
           <div class="section-title">3 · Margem e taxas</div>
           <div class="grid">
-            <div class="field"><label>Margem de lucro</label><div class="percent"><input id="margin" type="number" step="0.5" value="20"></div></div>
-            <div class="field"><label>Taxas / impostos</label><div class="percent"><input id="taxRate" type="number" step="0.5" value="6"></div></div>
+            <div class="field"><label>Margem de lucro</label><div class="percent"><input id="margin" type="number" step="0.5" value="0"></div></div>
+            <div class="field"><label>Taxas / impostos</label><div class="percent"><input id="taxRate" type="number" step="0.5" value="0"></div></div>
           </div>
         </div>
 
